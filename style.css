@@ -1,0 +1,27 @@
+body {
+    font: 14px helvetica neue, helvetica, arial, sans-serif;
+}
+
+#cy {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    left: 250px;
+    top:100px ;
+
+
+    border-color: #8B98AB;
+
+
+}
+
+#init{
+
+    color: #00B0E8;
+}
+
+#table{
+    border-color: #8B98AB;
+   padding-left: 20px;
+
+}
