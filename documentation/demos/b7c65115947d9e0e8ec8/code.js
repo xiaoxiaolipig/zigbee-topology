@@ -1,81 +1,181 @@
-$(function(){ // on dom ready
 
-var cy = cytoscape({
-  container: document.getElementById('cy'),
-  
-  layout: {
-    name: 'cose',
-    padding: 10,
-    randomize: true
-  },
-  
-  style: cytoscape.stylesheet()
-    .selector('node')
-      .css({
-        'shape': 'data(faveShape)',
-        'width': 'mapData(weight, 40, 80, 20, 60)',
-        'content': 'data(name)',
-        'text-valign': 'center',
-        'text-outline-width': 2,
-        'text-outline-color': 'data(faveColor)',
-        'background-color': 'data(faveColor)',
-        'color': '#fff'
-      })
-    .selector(':selected')
-      .css({
-        'border-width': 3,
-        'border-color': '#333'
-      })
-    .selector('edge')
-      .css({
-        'curve-style': 'bezier',
-        'opacity': 0.666,
-        'width': 'mapData(strength, 70, 100, 2, 6)',
-        'target-arrow-shape': 'triangle',
-        'source-arrow-shape': 'circle',
-        'line-color': 'data(faveColor)',
-        'source-arrow-color': 'data(faveColor)',
-        'target-arrow-color': 'data(faveColor)'
-      })
-    .selector('edge.questionable')
-      .css({
-        'line-style': 'dotted',
-        'target-arrow-shape': 'diamond'
-      })
-    .selector('.faded')
-      .css({
-        'opacity': 0.25,
-        'text-opacity': 0
-      }),
-  
-  elements: {
-    nodes: [
-      { data: { id: 'j', name: 'Jerry', weight: 65, faveColor: '#6FB1FC', faveShape: 'triangle' } },
-      { data: { id: 'e', name: 'Elaine', weight: 45, faveColor: '#EDA1ED', faveShape: 'ellipse' } },
-      { data: { id: 'k', name: 'Kramer', weight: 75, faveColor: '#86B342', faveShape: 'octagon' } },
-      { data: { id: 'g', name: 'George', weight: 70, faveColor: '#F5A45D', faveShape: 'rectangle' } }
-    ],
-    edges: [
-      { data: { source: 'j', target: 'e', faveColor: '#6FB1FC', strength: 90 } },
-      { data: { source: 'j', target: 'k', faveColor: '#6FB1FC', strength: 70 } },
-      { data: { source: 'j', target: 'g', faveColor: '#6FB1FC', strength: 80 } },
-     
-      { data: { source: 'e', target: 'j', faveColor: '#EDA1ED', strength: 95 } },
-      { data: { source: 'e', target: 'k', faveColor: '#EDA1ED', strength: 60 }, classes: 'questionable' },
-      
-      { data: { source: 'k', target: 'j', faveColor: '#86B342', strength: 100 } },
-      { data: { source: 'k', target: 'e', faveColor: '#86B342', strength: 100 } },
-      { data: { source: 'k', target: 'g', faveColor: '#86B342', strength: 100 } },
-      
-      { data: { source: 'g', target: 'j', faveColor: '#F5A45D', strength: 90 } }
-    ]
-  },
-  
-  ready: function(){
-    window.cy = this;
-    
-    // giddy up
-  }
-});
+var result;
+var myElement;
+var detailId;
+var theUrl="/api/rest/things";
+var cy;
+var myObject;
+var myProperties;
 
-}); // on dom ready
+var toNetjson=function (result) {
+    var nodes=[];
+    var edges=[];
+    var elements={nodes:"",edges:""};
+
+    for(var i=0;i<result.length;i++){
+        console.log("xxx",result.length);
+        nodes.push({
+            data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label+" "+result[i].properties.zigbee_lastupdate.slice(0,10)+" "+result[i].properties.zigbee_lastupdate.slice(11,19),weight: 15, faveColor: '#EDA1ED', faveShape: 'ellipse'}
+        });
+    }
+
+    for (var j=0;j<result.length;j++){
+        if(result[j].properties.zigbee_neighbors){
+            var ifNeigh=eval(result[j].properties.zigbee_neighbors).length;
+            if(ifNeigh){
+                for (var z=0;z<ifNeigh;z++){
+                    var test2=eval(result[j].properties.zigbee_neighbors)[z];
+                    edges.push({
+                        data:{source:result[j].properties.zigbee_networkaddress,target:test2.address, faveColor: '#6FB1FC',label:test2.lqi}
+                    })
+                }
+            }
+        }
+
+    }
+
+    console.log("nodes is ",nodes);
+    console.log("edges is ",edges);
+    elements.nodes=nodes;
+    elements.edges=edges;
+    console.log("element",elements)
+    myElement=elements;
+    console.log("my element ",myElement);
+}
+var myHttp=function(theUrl) {
+
+   $.ajax(theUrl,{
+       success:function (res) {
+           console.log("get response",res);
+          result=res;
+          console.log("this result",result)
+       }
+   })
+       .done(function (res) {
+           console.log("done res",res);
+       })
+    console.log("??result",result)
+
+}
+var delay=function () {
+    setTimeout(function () {
+        console.log("3 sec");
+        toNetjson(result);
+        drawTopology(myElement);
+    },3000);
+}
+var drawTopology=function(myElement){
+    cy=cytoscape({
+        container: document.getElementById('cy'),
+
+        layout: {
+            name: 'cose',
+            padding: 10,
+            randomize: true
+        },
+
+        style: cytoscape.stylesheet()
+            .selector('node')
+            .css({
+                'shape': 'data(faveShape)',
+                'width': 'mapData(weight, 40, 80, 20, 60)',
+                'content': 'data(name)',
+                'text-valign': 'center',
+                'text-outline-width': 2,
+                'text-outline-color': 'data(faveColor)',
+                'background-color': 'data(faveColor)',
+                'color': '#fff',
+            })
+            .selector(':selected')
+            .css({
+                'border-width': 3,
+                'border-color': '#333'
+            })
+            .selector('edge')
+            .css({
+                'curve-style': 'bezier',
+                'opacity': 0.666,
+                'width': 'mapData(strength, 70, 100, 2, 6)',
+                'target-arrow-shape': 'triangle',
+                'source-arrow-shape': 'circle',
+                'line-color': 'data(faveColor)',
+                'source-arrow-color': 'data(faveColor)',
+                'target-arrow-color': 'data(faveColor)',
+                'label': 'data(label)'
+            })
+            .selector('edge.questionable')
+            .css({
+                'line-style': 'dotted',
+                'target-arrow-shape': 'diamond'
+            })
+
+            .selector('.top-left')
+            .css({
+                'text-valign': 'top',
+                'text-halign': 'left'
+            })
+
+            .selector('.faded')
+            .css({
+                'opacity': 0.25,
+                'text-opacity': 0
+            }),
+
+        elements:myElement,
+
+
+        ready:function () {
+            window.cy=this;
+        }
+
+    });
+    cy.$('node').once('click',function (e) {
+        var ele=e.target;
+        console.log("clicked",ele.id());
+        detailId=ele.id();
+        console.log("what i get",detailId);
+        console.log("type",typeof detailId);
+       findDetailById(detailId);
+    })
+};
+var findDetailById=function (detailId) {
+    for (var i=0;i<result.length;i++){
+        if(result[i].properties.zigbee_networkaddress===detailId){
+            console.log("the object",result[i]);
+            myObject=result[i];
+            console.log("my object",myObject);
+            myProperties=myObject.properties;
+            console.log("my properties",myProperties);
+            $('#table').empty();
+            for( var key in myProperties){
+                $('#table').append('<thead><tr><th>' + key + '</th></tr></thead>'
+                    +'<tbody><tr><td>'+myProperties[key]+'</td></tr></tbody>')
+            }
+        }
+    }
+}
+
+function loadData() {
+    myHttp(theUrl);
+    console.log("load data result",result);
+    delay();
+}
+loadData();
+setInterval(loadData,30000);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
