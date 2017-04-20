@@ -14,9 +14,24 @@ var toNetjson=function (result) {
 
     for(var i=0;i<result.length;i++){
         console.log("xxx",result.length);
-        nodes.push({
-            data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label+" "+result[i].properties.zigbee_lastupdate.slice(0,10)+" "+result[i].properties.zigbee_lastupdate.slice(11,19),weight: 15, faveColor: '#EDA1ED', faveShape: 'ellipse'}
-        });
+        if(result[i].properties.zigbee_logicaltype==="COORDINATOR"){
+            nodes.push({
+                data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label+" "+result[i].properties.zigbee_lastupdate.slice(0,10)+" "+result[i].properties.zigbee_lastupdate.slice(11,19),weight: 75, faveColor: '#6FB1FC', faveShape: 'triangle'}
+            });
+        }else if(result[i].properties.zigbee_logicaltype==="ROUTER"){
+            nodes.push({
+                data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label+" "+result[i].properties.zigbee_lastupdate.slice(0,10)+" "+result[i].properties.zigbee_lastupdate.slice(11,19),weight: 75, faveColor: '#6FB1FC', faveShape: 'octagon'}
+            });
+        }else if(result[i].properties.zigbee_logicaltype==="END_DEVICE"){
+            nodes.push({
+                data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label+" "+result[i].properties.zigbee_lastupdate.slice(0,10)+" "+result[i].properties.zigbee_lastupdate.slice(11,19),weight: 75, faveColor: '#6FB1FC', faveShape: 'ellipse'}
+            });
+        }else {
+            nodes.push({
+                data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label+" "+result[i].properties.zigbee_lastupdate.slice(0,10)+" "+result[i].properties.zigbee_lastupdate.slice(11,19),weight: 75, faveColor: '#6FB1FC', faveShape: 'triangle'}
+            });
+        }
+
     }
 
     for (var j=0;j<result.length;j++){
@@ -81,10 +96,11 @@ var drawTopology=function(myElement){
                 'width': 'mapData(weight, 40, 80, 20, 60)',
                 'content': 'data(name)',
                 'text-valign': 'center',
-                'text-outline-width': 2,
+                'text-color':'data(faveColor)',
+                'text-outline-width': 1,
                 'text-outline-color': 'data(faveColor)',
                 'background-color': 'data(faveColor)',
-                'color': '#fff',
+                'color': '#fff'
             })
             .selector(':selected')
             .css({
@@ -129,15 +145,18 @@ var drawTopology=function(myElement){
         }
 
     });
-    cy.$('node').once('click',function (e) {
+    cy.$('node').on('tap',function (e) {
         var ele=e.target;
         console.log("clicked",ele.id());
         detailId=ele.id();
         console.log("what i get",detailId);
         console.log("type",typeof detailId);
        findDetailById(detailId);
-    })
+    });
+
 };
+
+
 var findDetailById=function (detailId) {
     for (var i=0;i<result.length;i++){
         if(result[i].properties.zigbee_networkaddress===detailId){
@@ -147,10 +166,31 @@ var findDetailById=function (detailId) {
             myProperties=myObject.properties;
             console.log("my properties",myProperties);
             $('#table').empty();
+            $('#modal-body').empty();
+
+            $('#table').append('<thead><tr><th>Status</th></tr></thead>'
+                +'<tbody><tr><td>'+myObject.statusInfo.status+'</td></tr></tbody>'
+                +'<thead><tr><th>Status Detail</th></tr></thead>'
+                +'<tbody><tr><td>'+myObject.statusInfo.statusDetail+'</td></tr></tbody>'
+                +'<thead><tr><th>Label</th></tr></thead>'
+                +'<tbody><tr><td>'+myObject.label+'</td></tr></tbody>'
+                +'<thead><tr><th>Bridge UID</th></tr></thead>'
+                +'<tbody><tr><td>'+myObject.bridgeUID+'</td></tr></tbody>'
+                +'<thead><tr><th>Zigbee Mac Address</th></tr></thead>'
+                +'<tbody><tr><td>'+myObject.configuration.zigbee_macaddress+'</td></tr></tbody>'
+                +'<thead><tr><th>UID</th></tr></thead>'
+                +'<tbody><tr><td>'+myObject.UID+'</td></tr></tbody>'
+                +'<thead><tr><th>Thing Type UID</th></tr></thead>'
+                +'<tbody><tr><td>'+myObject.thingTypeUID+'</td></tr></tbody>'
+                // +'<thead><tr><th>Channels</th></tr></thead>'
+                // +'<tbody><tr><td>'+JSON.stringify(myObject.channels)+'</td></tr></tbody>'
+            );
+
             for( var key in myProperties){
-                $('#table').append('<thead><tr><th>' + key + '</th></tr></thead>'
+                $('#modal-body').append('<thead><tr><th>' + key + '</th></tr></thead>'
                     +'<tbody><tr><td>'+myProperties[key]+'</td></tr></tbody>')
             }
+
         }
     }
 }
@@ -161,7 +201,7 @@ function loadData() {
     delay();
 }
 loadData();
-setInterval(loadData,30000);
+setInterval(loadData,60000);
 
 
 

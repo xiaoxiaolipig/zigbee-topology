@@ -15,29 +15,39 @@
 
 <body>
 <div id="init">
-    <h1>Topology refreshes every 30 seconds and you can click a node to see detail every 30 seconds</h1>
+    <h1>Topology refreshes every 60 seconds</h1>
+    <h4>Click a node to see details</h4>
 </div>
 <div id="table">
     <table class="table">
-        <!--<thead>-->
-        <!--<tr>-->
-            <!--<th>Status</th>-->
-            <!--<th>label</th>-->
-            <!--<th>Last Update</th>-->
-            <!--<th>Channel</th>-->
-            <!--<th>Network Address</th>-->
-        <!--</tr>-->
-        <!--</thead>-->
-        <!--<tbody>-->
-        <!--<tr>-->
-            <!--<th scope="row">{{myObject.label}}</th>-->
-            <!--<td>Mark</td>-->
-            <!--<td>Otto</td>-->
-            <!--<td>@mdo</td>-->
-        <!--</tr>-->
 
-        <!--</tbody>-->
     </table>
+</div>
+<div id="myModal">
+    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#exampleModalLong">
+        More Details
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="exampleModalLongTitle">Properties</h2>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="modal-body" class="modal-body">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-info">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <div id="cy"></div>
 </body>
