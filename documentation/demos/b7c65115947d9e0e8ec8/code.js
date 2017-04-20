@@ -6,6 +6,7 @@ var theUrl="/api/rest/things";
 var cy;
 var myObject;
 var myProperties;
+var UID;
 
 var toNetjson=function (result) {
     var nodes=[];
@@ -155,8 +156,6 @@ var drawTopology=function(myElement){
     });
 
 };
-
-
 var findDetailById=function (detailId) {
     for (var i=0;i<result.length;i++){
         if(result[i].properties.zigbee_networkaddress===detailId){
@@ -164,7 +163,9 @@ var findDetailById=function (detailId) {
             myObject=result[i];
             console.log("my object",myObject);
             myProperties=myObject.properties;
+            UID=myObject.UID;
             console.log("my properties",myProperties);
+            console.log("UID",UID);
             $('#table').empty();
             $('#modal-body').empty();
 
@@ -194,6 +195,47 @@ var findDetailById=function (detailId) {
         }
     }
 }
+var leaveCommand=function (UID) {
+    console.log("uid",UID);
+    console.log("leave");
+    var leaveUrl="/api/rest/things/"+UID+"/config";
+    console.log("leave url",leaveUrl);
+    var data={"zigbee_leave":true};
+    $.ajax(leaveUrl,{
+        method:'PUT',
+        contentType: "application/json",
+        accepts:"application/json",
+        dataType: "json",
+        body:data,
+        success:function (res) {
+            console.log("leave response",res);
+        }
+    })
+        .done(function (res) {
+            console.log("done leave res",res);
+        });
+
+
+
+};
+
+var joinCommand=function (UID) {
+    console.log("join");
+    var joinUrl="/api/rest/things/"+UID+"/config";
+    $.ajax(joinUrl,{
+        method:'PUT',
+        contentType: "application/json",
+        body:{"zigbee_joinenable":true},
+        dataType: "json",
+        success:function (res) {
+            console.log("join response",res);
+        }
+    })
+        .done(function (res) {
+            console.log("done join res",res);
+        })
+}
+
 
 function loadData() {
     myHttp(theUrl);
@@ -202,11 +244,6 @@ function loadData() {
 }
 loadData();
 setInterval(loadData,60000);
-
-
-
-
-
 
 
 
