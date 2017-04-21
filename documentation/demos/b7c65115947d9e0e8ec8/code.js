@@ -15,22 +15,43 @@ var toNetjson=function (result) {
 
     for(var i=0;i<result.length;i++){
         console.log("xxx",result.length);
-        if(result[i].properties.zigbee_logicaltype==="COORDINATOR"){
-            nodes.push({
-                data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label+" "+result[i].properties.zigbee_lastupdate.slice(0,10)+" "+result[i].properties.zigbee_lastupdate.slice(11,19),weight: 75, faveColor: '#6FB1FC', faveShape: 'triangle'}
-            });
-        }else if(result[i].properties.zigbee_logicaltype==="ROUTER"){
-            nodes.push({
-                data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label+" "+result[i].properties.zigbee_lastupdate.slice(0,10)+" "+result[i].properties.zigbee_lastupdate.slice(11,19),weight: 75, faveColor: '#6FB1FC', faveShape: 'octagon'}
-            });
-        }else if(result[i].properties.zigbee_logicaltype==="END_DEVICE"){
-            nodes.push({
-                data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label+" "+result[i].properties.zigbee_lastupdate.slice(0,10)+" "+result[i].properties.zigbee_lastupdate.slice(11,19),weight: 75, faveColor: '#6FB1FC', faveShape: 'ellipse'}
-            });
+        if(result[i].properties.zigbee_lastupdate){
+            if(result[i].properties.zigbee_logicaltype==="COORDINATOR"){
+                nodes.push({
+                    data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label+" "+result[i].properties.zigbee_lastupdate.slice(0,10)+" "+result[i].properties.zigbee_lastupdate.slice(11,19),weight: 75, faveColor: '#6FB1FC', faveShape: 'triangle'}
+                });
+            }else if(result[i].properties.zigbee_logicaltype==="ROUTER"){
+                nodes.push({
+                    data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label+" "+result[i].properties.zigbee_lastupdate.slice(0,10)+" "+result[i].properties.zigbee_lastupdate.slice(11,19),weight: 75, faveColor: '#6FB1FC', faveShape: 'octagon'}
+                });
+            }else if(result[i].properties.zigbee_logicaltype==="END_DEVICE"){
+                nodes.push({
+                    data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label+" "+result[i].properties.zigbee_lastupdate.slice(0,10)+" "+result[i].properties.zigbee_lastupdate.slice(11,19),weight: 75, faveColor: '#6FB1FC', faveShape: 'ellipse'}
+                });
+            }else {
+                nodes.push({
+                    data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label+" "+result[i].properties.zigbee_lastupdate.slice(0,10)+" "+result[i].properties.zigbee_lastupdate.slice(11,19),weight: 75, faveColor: '#6FB1FC', faveShape: 'triangle'}
+                });
+            }
+
         }else {
-            nodes.push({
-                data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label+" "+result[i].properties.zigbee_lastupdate.slice(0,10)+" "+result[i].properties.zigbee_lastupdate.slice(11,19),weight: 75, faveColor: '#6FB1FC', faveShape: 'triangle'}
-            });
+            if(result[i].properties.zigbee_logicaltype==="COORDINATOR"){
+                nodes.push({
+                    data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label,weight: 75, faveColor: '#6FB1FC', faveShape: 'triangle'}
+                });
+            }else if(result[i].properties.zigbee_logicaltype==="ROUTER"){
+                nodes.push({
+                    data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label,weight: 75, faveColor: '#6FB1FC', faveShape: 'octagon'}
+                });
+            }else if(result[i].properties.zigbee_logicaltype==="END_DEVICE"){
+                nodes.push({
+                    data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label,weight: 75, faveColor: '#6FB1FC', faveShape: 'ellipse'}
+                });
+            }else {
+                nodes.push({
+                    data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label,weight: 75, faveColor: '#6FB1FC', faveShape: 'triangle'}
+                });
+            }
         }
 
     }
