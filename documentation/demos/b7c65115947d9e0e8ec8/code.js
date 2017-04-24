@@ -221,13 +221,18 @@ var leaveCommand=function (UID) {
     console.log("leave");
     var leaveUrl="/api/rest/things/"+UID+"/config";
     console.log("leave url",leaveUrl);
-    var data={"zigbee_leave":true};
+    var data={'zigbee_leave':true};
+    /*
     $.ajax(leaveUrl,{
         method:'PUT',
+        contentLength:data.length,
         contentType: "application/json",
         accepts:"application/json",
         dataType: "json",
-        body:data,
+        data:data,
+        beforeSend:function (xhr) {
+            xhr.setRequestHeader("Content-length",data.length);
+        },
         success:function (res) {
             console.log("leave response",res);
         }
@@ -235,6 +240,16 @@ var leaveCommand=function (UID) {
         .done(function (res) {
             console.log("done leave res",res);
         });
+    */
+    $.ajax({
+        url : leaveUrl,
+        type : "PUT",
+        data : JSON.stringify(data),
+        contentType: "application/json",
+        success:function (res) {
+            console.log("leave response",res);
+        }
+    })
 
 
 
@@ -243,18 +258,18 @@ var leaveCommand=function (UID) {
 var joinCommand=function (UID) {
     console.log("join");
     var joinUrl="/api/rest/things/"+UID+"/config";
-    $.ajax(joinUrl,{
-        method:'PUT',
+    var dataa={"zigbee_joinenable":true};
+    $.ajax({
+        url:joinUrl,
+        type:'PUT',
         contentType: "application/json",
-        body:{"zigbee_joinenable":true},
+        data:JSON.stringify(dataa),
         dataType: "json",
         success:function (res) {
             console.log("join response",res);
         }
     })
-        .done(function (res) {
-            console.log("done join res",res);
-        })
+
 }
 
 
