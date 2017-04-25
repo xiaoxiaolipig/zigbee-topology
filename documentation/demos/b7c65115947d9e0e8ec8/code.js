@@ -7,6 +7,8 @@ var cy;
 var myObject;
 var myProperties;
 var UID;
+var nodeIdArr;
+var edgeTargetArr;
 
 var toNetjson=function (result) {
     var nodes=[];
@@ -54,7 +56,21 @@ var toNetjson=function (result) {
             }
         }
 
+        // if(result[i].properties.zigbee_neighbors){
+        //     var ifNeigh2=eval(result[i].properties.zigbee_neighbors).length;
+        //     if(ifNeigh2){
+        //         for (var y=0;y<ifNeigh2;y++){
+        //             var test3=eval(result[i].properties.zigbee_neighbors)[y];
+        //             if(test3.address!=){
+        //                 nodes.push({data:{id:test3.address,name:test3.address,weight: 75, faveColor: '#6FB1FC', faveShape: 'triangle'}})
+        //             }
+        //
+        //         }
+        //     }
+        // }
+
     }
+
 
     for (var j=0;j<result.length;j++){
         if(result[j].properties.zigbee_neighbors){
@@ -71,8 +87,49 @@ var toNetjson=function (result) {
 
     }
 
+
     console.log("nodes is ",nodes);
     console.log("edges is ",edges);
+
+    for(var a=0;a<nodes.length;a++){
+        nodeIdArr=[];
+        nodeIdArr.push(nodes[a].data.id);
+    }
+    console.log("node id",nodeIdArr);
+
+
+    for (var b=0;b<edges.length;b++){
+        edgeTargetArr=[];
+        edgeTargetArr.push(edges[b].data.target);
+    }
+    console.log("target are",edgeTargetArr);
+
+    var unique=[];
+    if(nodeIdArr&&edgeTargetArr){
+        for (var c=0;c<nodeIdArr.length;c++){
+            var found=false;
+            for (var d=0;d<edgeTargetArr.length;d++){
+                if(nodeIdArr[c]===edgeTargetArr[d]){
+                    found=true;
+                    break;
+                }
+            }
+            if(found===false){
+                unique.push(nodeIdArr[c]);
+            }
+        }
+    }
+
+    console.log("unique",unique);
+
+    if(unique){
+        for (var e=0;e<unique.length;e++){
+            nodes.push({
+                data:{id:unique[e],name:unique[e],weight: 75, faveColor: '#808080', faveShape:  'octagon'}
+            })
+        }
+    }
+
     elements.nodes=nodes;
     elements.edges=edges;
     console.log("element",elements)
