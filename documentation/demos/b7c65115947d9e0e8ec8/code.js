@@ -56,18 +56,6 @@ var toNetjson=function (result) {
             }
         }
 
-        // if(result[i].properties.zigbee_neighbors){
-        //     var ifNeigh2=eval(result[i].properties.zigbee_neighbors).length;
-        //     if(ifNeigh2){
-        //         for (var y=0;y<ifNeigh2;y++){
-        //             var test3=eval(result[i].properties.zigbee_neighbors)[y];
-        //             if(test3.address!=){
-        //                 nodes.push({data:{id:test3.address,name:test3.address,weight: 75, faveColor: '#6FB1FC', faveShape: 'triangle'}})
-        //             }
-        //
-        //         }
-        //     }
-        // }
 
     }
 
@@ -90,16 +78,15 @@ var toNetjson=function (result) {
 
     console.log("nodes is ",nodes);
     console.log("edges is ",edges);
+
     nodeIdArr=[];
     for(var a=0;a<nodes.length;a++){
-
         nodeIdArr.push(nodes[a].data.id);
     }
     console.log("node id",nodeIdArr);
 
     edgeTargetArr=[];
     for (var b=0;b<edges.length;b++){
-
         edgeTargetArr.push(edges[b].data.target);
     }
     console.log("target are",edgeTargetArr);
@@ -119,13 +106,12 @@ var toNetjson=function (result) {
             }
         }
     }
-
     console.log("unique",unique);
 
     if(unique.length){
         for (var e=0;e<unique.length;e++){
             nodes.push({
-                data:{id:unique[e],name:unique[e],weight: 75, faveColor: '#808080', faveShape:  'octagon'}
+                data:{id:unique[e],name:unique[e],weight: 75, faveColor: '#808080', faveShape:'octagon'}
             })
         }
     }
@@ -156,7 +142,7 @@ var delay=function () {
         console.log("3 sec");
         toNetjson(result);
         drawTopology(myElement);
-    },3000);
+    },2000);
 }
 var drawTopology=function(myElement){
     cy=cytoscape({
