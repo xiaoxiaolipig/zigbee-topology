@@ -105,7 +105,7 @@ var toNetjson=function (result) {
     console.log("target are",edgeTargetArr);
 
     var unique=[];
-    if(nodeIdArr&&edgeTargetArr){
+    if(nodeIdArr.length&&edgeTargetArr.length){
         for (var c=0;c<nodeIdArr.length;c++){
             var found=false;
             for (var d=0;d<edgeTargetArr.length;d++){
@@ -122,7 +122,7 @@ var toNetjson=function (result) {
 
     console.log("unique",unique);
 
-    if(unique){
+    if(unique.length){
         for (var e=0;e<unique.length;e++){
             nodes.push({
                 data:{id:unique[e],name:unique[e],weight: 75, faveColor: '#808080', faveShape:  'octagon'}
