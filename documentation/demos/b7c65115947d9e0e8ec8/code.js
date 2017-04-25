@@ -90,16 +90,16 @@ var toNetjson=function (result) {
 
     console.log("nodes is ",nodes);
     console.log("edges is ",edges);
-
+    nodeIdArr=[];
     for(var a=0;a<nodes.length;a++){
-        nodeIdArr=[];
+
         nodeIdArr.push(nodes[a].data.id);
     }
     console.log("node id",nodeIdArr);
 
-
+    edgeTargetArr=[];
     for (var b=0;b<edges.length;b++){
-        edgeTargetArr=[];
+
         edgeTargetArr.push(edges[b].data.target);
     }
     console.log("target are",edgeTargetArr);
