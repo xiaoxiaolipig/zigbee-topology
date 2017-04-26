@@ -9,10 +9,12 @@ var myProperties;
 var UID;
 var nodeIdArr;
 var edgeTargetArr;
+var edgesDuplicate;
 
 var toNetjson=function (result) {
     var nodes=[];
     var edges=[];
+    edgesDuplicate=[];
     var elements={nodes:"",edges:""};
 
     for(var i=0;i<result.length;i++){
@@ -66,7 +68,7 @@ var toNetjson=function (result) {
             if(ifRoutes){
                 for (var z=0;z<ifRoutes;z++){
                     var test3=eval(result[j].properties.zigbee_routes)[z];
-                    edges.push({
+                    edgesDuplicate.push({
                         data:{source:result[j].properties.zigbee_networkaddress,target:test3.next_hop, faveColor: '#6FB1FC',label:test3.state}
                     })
                 }
@@ -74,6 +76,17 @@ var toNetjson=function (result) {
         }
 
     }
+
+    edgesDuplicate.forEach(function(item) { // loop through array which contain duplicate
+        // if item is not found in _unArray it will return empty array
+        var isPresent = edges.filter(function(elem) {
+            return elem.data.source === item.data.source && elem.data.target === item.data.target
+        });
+        if (isPresent.length == 0) {
+            edges.push(item)
+        }
+    });
+    console.log("after un duplicate",edges);
 
     nodeIdArr=[];
     for(var a=0;a<nodes.length;a++){
