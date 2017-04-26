@@ -61,23 +61,19 @@ var toNetjson=function (result) {
 
 
     for (var j=0;j<result.length;j++){
-        if(result[j].properties.zigbee_neighbors){
-            var ifNeigh=eval(result[j].properties.zigbee_neighbors).length;
-            if(ifNeigh){
-                for (var z=0;z<ifNeigh;z++){
-                    var test2=eval(result[j].properties.zigbee_neighbors)[z];
+        if(result[j].properties.zigbee_routes){
+            var ifRoutes=eval(result[j].properties.zigbee_routes).length;
+            if(ifRoutes){
+                for (var z=0;z<ifRoutes;z++){
+                    var test3=eval(result[j].properties.zigbee_routes)[z];
                     edges.push({
-                        data:{source:result[j].properties.zigbee_networkaddress,target:test2.address, faveColor: '#6FB1FC',label:test2.lqi}
+                        data:{source:result[j].properties.zigbee_networkaddress,target:test3.next_hop, faveColor: '#6FB1FC',label:test3.state}
                     })
                 }
             }
         }
 
     }
-
-
-    console.log("nodes is ",nodes);
-    console.log("edges is ",edges);
 
     nodeIdArr=[];
     for(var a=0;a<nodes.length;a++){
@@ -92,6 +88,7 @@ var toNetjson=function (result) {
     console.log("target are",edgeTargetArr);
 
     var unique=[];
+    /*
     if(nodeIdArr.length&&edgeTargetArr.length){
         for (var c=0;c<nodeIdArr.length;c++){
             var found=false;
@@ -101,8 +98,23 @@ var toNetjson=function (result) {
                     break;
                 }
             }
-            if(found===false){
+            if(found==false){
                 unique.push(nodeIdArr[c]);
+            }
+        }
+    }
+    */
+    if(nodeIdArr.length&&edgeTargetArr.length){
+        for (var c=0;c<edgeTargetArr.length;c++){
+            var found=false;
+            for (var d=0;d<nodeIdArr.length;d++){
+                if(edgeTargetArr[c]===nodeIdArr[d]){
+                    found=true;
+                    break;
+                }
+            }
+            if(found==false){
+                unique.push(edgeTargetArr[c]);
             }
         }
     }
@@ -121,6 +133,117 @@ var toNetjson=function (result) {
     console.log("element",elements)
     myElement=elements;
     console.log("my element ",myElement);
+
+
+    /*
+        for(var i=0;i<result.length;i++){
+            console.log("xxx",result.length);
+            if(result[i].properties.zigbee_lastupdate){
+                if(result[i].properties.zigbee_logicaltype==="COORDINATOR"){
+                    nodes.push({
+                        data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label+" "+result[i].properties.zigbee_lastupdate.slice(0,10)+" "+result[i].properties.zigbee_lastupdate.slice(11,19),weight: 75, faveColor: '#6FB1FC', faveShape: 'triangle'}
+                    });
+                }else if(result[i].properties.zigbee_logicaltype==="ROUTER"){
+                    nodes.push({
+                        data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label+" "+result[i].properties.zigbee_lastupdate.slice(0,10)+" "+result[i].properties.zigbee_lastupdate.slice(11,19),weight: 75, faveColor: '#6FB1FC', faveShape: 'octagon'}
+                    });
+                }else if(result[i].properties.zigbee_logicaltype==="END_DEVICE"){
+                    nodes.push({
+                        data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label+" "+result[i].properties.zigbee_lastupdate.slice(0,10)+" "+result[i].properties.zigbee_lastupdate.slice(11,19),weight: 75, faveColor: '#6FB1FC', faveShape: 'ellipse'}
+                    });
+                }else {
+                    nodes.push({
+                        data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label+" "+result[i].properties.zigbee_lastupdate.slice(0,10)+" "+result[i].properties.zigbee_lastupdate.slice(11,19),weight: 75, faveColor: '#6FB1FC', faveShape: 'triangle'}
+                    });
+                }
+
+            }else {
+                if(result[i].properties.zigbee_logicaltype==="COORDINATOR"){
+                    nodes.push({
+                        data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label,weight: 75, faveColor: '#6FB1FC', faveShape: 'triangle'}
+                    });
+                }else if(result[i].properties.zigbee_logicaltype==="ROUTER"){
+                    nodes.push({
+                        data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label,weight: 75, faveColor: '#6FB1FC', faveShape: 'octagon'}
+                    });
+                }else if(result[i].properties.zigbee_logicaltype==="END_DEVICE"){
+                    nodes.push({
+                        data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label,weight: 75, faveColor: '#6FB1FC', faveShape: 'ellipse'}
+                    });
+                }else {
+                    nodes.push({
+                        data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label,weight: 75, faveColor: '#6FB1FC', faveShape: 'triangle'}
+                    });
+                }
+            }
+
+
+        }
+
+
+        for (var j=0;j<result.length;j++){
+            if(result[j].properties.zigbee_neighbors){
+                var ifNeigh=eval(result[j].properties.zigbee_neighbors).length;
+                if(ifNeigh){
+                    for (var z=0;z<ifNeigh;z++){
+                        var test2=eval(result[j].properties.zigbee_neighbors)[z];
+                        edges.push({
+                            data:{source:result[j].properties.zigbee_networkaddress,target:test2.address, faveColor: '#6FB1FC',label:test2.lqi}
+                        })
+                    }
+                }
+            }
+
+        }
+
+
+        console.log("nodes is ",nodes);
+        console.log("edges is ",edges);
+
+        nodeIdArr=[];
+        for(var a=0;a<nodes.length;a++){
+            nodeIdArr.push(nodes[a].data.id);
+        }
+        console.log("node id",nodeIdArr);
+
+        edgeTargetArr=[];
+        for (var b=0;b<edges.length;b++){
+            edgeTargetArr.push(edges[b].data.target);
+        }
+        console.log("target are",edgeTargetArr);
+
+        var unique=[];
+        if(nodeIdArr.length&&edgeTargetArr.length){
+            for (var c=0;c<nodeIdArr.length;c++){
+                var found=false;
+                for (var d=0;d<edgeTargetArr.length;d++){
+                    if(nodeIdArr[c]===edgeTargetArr[d]){
+                        found=true;
+                        break;
+                    }
+                }
+                if(found===false){
+                    unique.push(nodeIdArr[c]);
+                }
+            }
+        }
+        console.log("unique",unique);
+
+        if(unique.length){
+            for (var e=0;e<unique.length;e++){
+                nodes.push({
+                    data:{id:unique[e],name:unique[e],weight: 75, faveColor: '#808080', faveShape:'octagon'}
+                })
+            }
+        }
+
+        elements.nodes=nodes;
+        elements.edges=edges;
+        console.log("element",elements)
+        myElement=elements;
+        console.log("my element ",myElement);
+
+        */
 }
 var myHttp=function(theUrl) {
 
@@ -264,26 +387,7 @@ var leaveCommand=function (UID) {
     console.log("leave");
     var leaveUrl="/api/rest/things/"+UID+"/config";
     console.log("leave url",leaveUrl);
-    var data={'zigbee_leave':true};
-    /*
-    $.ajax(leaveUrl,{
-        method:'PUT',
-        contentLength:data.length,
-        contentType: "application/json",
-        accepts:"application/json",
-        dataType: "json",
-        data:data,
-        beforeSend:function (xhr) {
-            xhr.setRequestHeader("Content-length",data.length);
-        },
-        success:function (res) {
-            console.log("leave response",res);
-        }
-    })
-        .done(function (res) {
-            console.log("done leave res",res);
-        });
-    */
+    var data={"zigbee_leave":true};
     $.ajax({
         url : leaveUrl,
         type : "PUT",
@@ -293,11 +397,7 @@ var leaveCommand=function (UID) {
             console.log("leave response",res);
         }
     })
-
-
-
 };
-
 var joinCommand=function (UID) {
     console.log("join");
     var joinUrl="/api/rest/things/"+UID+"/config";
