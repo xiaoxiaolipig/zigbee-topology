@@ -61,22 +61,37 @@ var toNetjson=function (result) {
 
     }
 
+/* routes data structure
+ for (var j=0;j<result.length;j++){
+ if(result[j].properties.zigbee_routes){
+ var ifRoutes=eval(result[j].properties.zigbee_routes).length;
+ if(ifRoutes){
+ for (var z=0;z<ifRoutes;z++){
+ var test3=eval(result[j].properties.zigbee_routes)[z];
+ edgesDuplicate.push({
+ data:{source:result[j].properties.zigbee_networkaddress,target:test3.next_hop, faveColor: '#6FB1FC',label:test3.state}
+ })
+ }
+ }
+ }
+
+ }
+ */
 
     for (var j=0;j<result.length;j++){
-        if(result[j].properties.zigbee_routes){
-            var ifRoutes=eval(result[j].properties.zigbee_routes).length;
-            if(ifRoutes){
-                for (var z=0;z<ifRoutes;z++){
-                    var test3=eval(result[j].properties.zigbee_routes)[z];
+        if(result[j].properties.zigbee_neighbors){
+            var ifNeigh=eval(result[j].properties.zigbee_neighbors).length;
+            if(ifNeigh){
+                for (var z=0;z<ifNeigh;z++){
+                    var test3=eval(result[j].properties.zigbee_neighbors)[z];
                     edgesDuplicate.push({
-                        data:{source:result[j].properties.zigbee_networkaddress,target:test3.next_hop, faveColor: '#6FB1FC',label:test3.state}
+                        data:{source:test3.address,target:result[j].properties.zigbee_networkaddress, faveColor: '#6FB1FC',label:test3.lqi}
                     })
                 }
             }
         }
 
     }
-
     edgesDuplicate.forEach(function(item) { // loop through array which contain duplicate
         // if item is not found in _unArray it will return empty array
         var isPresent = edges.filter(function(elem) {
@@ -87,6 +102,7 @@ var toNetjson=function (result) {
         }
     });
     console.log("after un duplicate",edges);
+
 
     nodeIdArr=[];
     for(var a=0;a<nodes.length;a++){
@@ -435,7 +451,7 @@ function loadData() {
     delay();
 }
 loadData();
-setInterval(loadData,60000);
+setInterval(loadData,20000);
 
 
 
