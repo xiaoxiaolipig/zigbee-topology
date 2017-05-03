@@ -16,47 +16,109 @@ var toNetjson=function (result) {
     var edges=[];
     edgesDuplicate=[];
     var elements={nodes:"",edges:""};
-
+    var currentDate=new Date();
+    console.log("current date",currentDate);
+    var currentUTC=currentDate.toISOString();
+    console.log("current UTC ",currentUTC);
+     var currentUTCtime=new Date(currentUTC).getTime();
+     console.log("current UTC UNIX ",currentUTCtime);
     for(var i=0;i<result.length;i++){
-        console.log("xxx",result.length);
+        console.log("result length",result.length);
         if(result[i].properties.zigbee_lastupdate){
+            //var timeString=result[i].properties.zigbee_lastupdate.slice(0,10)+" "+result[i].properties.zigbee_lastupdate.slice(11,19);
+            var timeString=result[i].properties.zigbee_lastupdate;
+            console.log("original data time string ",timeString);
+            var timeStamp=(new Date(timeString)).getTime();
+            console.log("data time stamp ",timeStamp);
+            var timeDiff=Math.floor((currentUTCtime-timeStamp)/1000);//in seconds
+            console.log("time difference",timeDiff);
+
+
             if(result[i].properties.zigbee_logicaltype==="COORDINATOR"){
-                nodes.push({
-                    data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label+" "+result[i].properties.zigbee_lastupdate.slice(0,10)+" "+result[i].properties.zigbee_lastupdate.slice(11,19),weight: 75, faveColor: '#6FB1FC', faveShape: 'triangle'}
-                });
+                if(timeDiff<=30){
+                    nodes.push({
+                        data:{id:result[i].properties.zigbee_networkaddress,name:result[i].properties.zigbee_networkaddress,weight: 75, faveColor: '#EDA1ED', faveShape: 'triangle'}
+                    });
+                }else if(30<timeDiff<=120){
+                    nodes.push({
+                        data:{id:result[i].properties.zigbee_networkaddress,name:result[i].properties.zigbee_networkaddress,weight: 75, faveColor: '#86B242', faveShape: 'triangle'}
+                    });
+                }else if(120<timeDiff<=180){
+                    nodes.push({
+                        data:{id:result[i].properties.zigbee_networkaddress,name:result[i].properties.zigbee_networkaddress,weight: 75, faveColor: '#6FB1FC', faveShape: 'triangle'}
+                    });
+                }else {
+                    nodes.push({
+                        data:{id:result[i].properties.zigbee_networkaddress,name:result[i].properties.zigbee_networkaddress,weight: 75, faveColor: '#F5A45D', faveShape: 'triangle'}
+                    });
+                }
+
             }else if(result[i].properties.zigbee_logicaltype==="ROUTER"){
-                nodes.push({
-                    data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label+" "+result[i].properties.zigbee_lastupdate.slice(0,10)+" "+result[i].properties.zigbee_lastupdate.slice(11,19),weight: 75, faveColor: '#6FB1FC', faveShape: 'octagon'}
-                });
+                if(timeDiff<=30){
+                    nodes.push({
+                        data:{id:result[i].properties.zigbee_networkaddress,name:result[i].properties.zigbee_networkaddress,weight: 75, faveColor: '#EDA1ED', faveShape: 'octagon'}
+                    });
+                }else if(timeDiff>30&&timeDiff<=120){
+                    nodes.push({
+                        data:{id:result[i].properties.zigbee_networkaddress,name:result[i].properties.zigbee_networkaddress,weight: 75, faveColor: '#86B242', faveShape: 'octagon'}
+                    });
+                }else if(timeDiff>120&&timeDiff<=180){
+                    nodes.push({
+                        data:{id:result[i].properties.zigbee_networkaddress,name:result[i].properties.zigbee_networkaddress,weight: 75, faveColor: '#6FB1FC', faveShape: 'octagon'}
+                    });
+                }else {
+                    nodes.push({
+                        data:{id:result[i].properties.zigbee_networkaddress,name:result[i].properties.zigbee_networkaddress,weight: 75, faveColor: '#F5A45D', faveShape: 'octagon'}
+                    });
+                }
+
             }else if(result[i].properties.zigbee_logicaltype==="END_DEVICE"){
-                nodes.push({
-                    data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label+" "+result[i].properties.zigbee_lastupdate.slice(0,10)+" "+result[i].properties.zigbee_lastupdate.slice(11,19),weight: 75, faveColor: '#6FB1FC', faveShape: 'ellipse'}
-                });
+                if(timeDiff<=30){
+                    nodes.push({
+                        data:{id:result[i].properties.zigbee_networkaddress,name:result[i].properties.zigbee_networkaddress,weight: 75, faveColor: '#EDA1ED', faveShape: 'ellipse'}
+                    });
+                }else if(timeDiff>30&&timeDiff<=120){
+                    nodes.push({
+                        data:{id:result[i].properties.zigbee_networkaddress,name:result[i].properties.zigbee_networkaddress,weight: 75, faveColor: '#86B242', faveShape: 'ellipse'}
+                    });
+                }else if(timeDiff>120&&timeDiff<=180){
+                    nodes.push({
+                        data:{id:result[i].properties.zigbee_networkaddress,name:result[i].properties.zigbee_networkaddress,weight: 75, faveColor: '#6FB1FC', faveShape: 'ellipse'}
+                    });
+                }else {
+                    nodes.push({
+                        data:{id:result[i].properties.zigbee_networkaddress,name:result[i].properties.zigbee_networkaddress,weight: 75, faveColor: '#F5A45D', faveShape: 'ellipse'}
+                    });
+                }
+
             }else {
                 nodes.push({
-                    data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label+" "+result[i].properties.zigbee_lastupdate.slice(0,10)+" "+result[i].properties.zigbee_lastupdate.slice(11,19),weight: 75, faveColor: '#6FB1FC', faveShape: 'triangle'}
+                    data:{id:result[i].properties.zigbee_networkaddress,name:result[i].properties.zigbee_networkaddress,weight: 75, faveColor: '#000000', faveShape: 'rectangle'}
                 });
             }
 
-        }else {
+        }
+        /* no update time info
+        else {
             if(result[i].properties.zigbee_logicaltype==="COORDINATOR"){
                 nodes.push({
                     data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label,weight: 75, faveColor: '#6FB1FC', faveShape: 'triangle'}
                 });
             }else if(result[i].properties.zigbee_logicaltype==="ROUTER"){
                 nodes.push({
-                    data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label,weight: 75, faveColor: '#6FB1FC', faveShape: 'octagon'}
+                    data:{id:result[i].properties.zigbee_networkaddress,name:result[i].properties.zigbee_networkaddress,weight: 75, faveColor: '#6FB1FC', faveShape: 'octagon'}
                 });
             }else if(result[i].properties.zigbee_logicaltype==="END_DEVICE"){
                 nodes.push({
-                    data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label,weight: 75, faveColor: '#6FB1FC', faveShape: 'ellipse'}
+                    data:{id:result[i].properties.zigbee_networkaddress,name:result[i].properties.zigbee_networkaddress,weight: 75, faveColor: '#6FB1FC', faveShape: 'ellipse'}
                 });
             }else {
                 nodes.push({
-                    data:{id:result[i].properties.zigbee_networkaddress,name:result[i].label,weight: 75, faveColor: '#6FB1FC', faveShape: 'triangle'}
+                    data:{id:result[i].properties.zigbee_networkaddress,name:result[i].properties.zigbee_networkaddress,weight: 75, faveColor: '#6FB1FC', faveShape: 'triangle'}
                 });
             }
         }
+        */
 
 
     }
@@ -84,9 +146,26 @@ var toNetjson=function (result) {
             if(ifNeigh){
                 for (var z=0;z<ifNeigh;z++){
                     var test3=eval(result[j].properties.zigbee_neighbors)[z];
-                    edgesDuplicate.push({
-                        data:{source:test3.address,target:result[j].properties.zigbee_networkaddress, faveColor: '#6FB1FC',label:test3.lqi}
-                    })
+                    if(test3.lqi!=0){
+                        if(test3.lqi>0&&test3.lqi<=63){
+                            edgesDuplicate.push({
+                                data:{source:test3.address,target:result[j].properties.zigbee_networkaddress, faveColor: '#FFFF33',label:test3.lqi}
+                            });
+                        }else if(test3.lqi<63&&test3.lqi<=126){
+                            edgesDuplicate.push({
+                                data:{source:test3.address,target:result[j].properties.zigbee_networkaddress, faveColor: '#6EFF33',label:test3.lqi}
+                            });
+                        }else if(test3.lqi>126&&test3.lqi<=189){
+                            edgesDuplicate.push({
+                                data:{source:test3.address,target:result[j].properties.zigbee_networkaddress, faveColor: '#33FFF3',label:test3.lqi}
+                            });
+                        }else {
+                            edgesDuplicate.push({
+                                data:{source:test3.address,target:result[j].properties.zigbee_networkaddress, faveColor: '#3352FF',label:test3.lqi}
+                            });
+                        }
+
+                    }
                 }
             }
         }
@@ -112,7 +191,7 @@ var toNetjson=function (result) {
 
     edgeTargetArr=[];
     for (var b=0;b<edges.length;b++){
-        edgeTargetArr.push(edges[b].data.target);
+        edgeTargetArr.push(edges[b].data.source);
     }
     console.log("target are",edgeTargetArr);
 
@@ -301,7 +380,7 @@ var drawTopology=function(myElement){
         container: document.getElementById('cy'),
 
         layout: {
-            name: 'cose',
+            name: 'circle',
             padding: 10,
             randomize: true
         },
@@ -406,6 +485,14 @@ var findDetailById=function (detailId) {
             for( var key in myProperties){
                 $('#modal-body').append('<thead><tr><th>' + key + '</th></tr></thead>'
                     +'<tbody><tr><td>'+myProperties[key]+'</td></tr></tbody>')
+            }
+            if(myObject.properties.zigbee_networkaddress==0){
+                $('#modal-footer').empty();
+                $('#modal-footer').append('<div class="row"><div id="join" class="col-md-12"><button type="button" class="btn btn-info" onclick="joinCommand(UID)" >Join Command</button></div></div>')
+            }else {
+                $('#modal-footer').empty();
+                $('#modal-footer').append('<div class="row"><div id="join" class="col-md-8"><button type="button" class="btn btn-info" onclick="joinCommand(UID)" >Join Command</button></div>'
+                    +'<div id="join" class="col-md-4"><button type="button" class="btn btn-info" onclick="leaveCommand(UID)" >Leave Command</button></div></div>')
             }
 
         }
